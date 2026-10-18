@@ -1,0 +1,23 @@
+name: Build Maccy
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build upstream Release
+        run: |
+          xcodebuild -version
+          xcodebuild -project Maccy.xcodeproj -scheme Maccy -configuration Release -derivedDataPath build -destination 'generic/platform=macOS' CODE_SIGN_IDENTITY=- 'CODE_SIGN_IDENTITY[sdk=macosx*]=-' CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PRODUCT_BUNDLE_IDENTIFIER=org.p0deje.Maccy build
+      - name: Verify and package
+        run: |
+          codesign --verify --deep --strict build/Build/Products/Release/Maccy.app
+          codesign -d --entitlements :- build/Build/Products/Release/Maccy.app
+          ditto -c -k --keepParent build/Build/Products/Release/Maccy.app Maccy.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Maccy
+          path: Maccy.zip
