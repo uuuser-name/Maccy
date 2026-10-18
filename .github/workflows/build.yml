@@ -13,7 +13,7 @@ jobs:
       - name: Build upstream Release
         run: |
           xcodebuild -version
-          xcodebuild -project Maccy.xcodeproj -scheme Maccy -configuration Release -derivedDataPath build -destination 'generic/platform=macOS' CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PRODUCT_BUNDLE_IDENTIFIER=org.p0deje.Maccy build
+          xcodebuild -project Maccy.xcodeproj -scheme Maccy -configuration Release -derivedDataPath build -destination 'generic/platform=macOS' CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PRODUCT_BUNDLE_IDENTIFIER=org.p0deje.Maccy SWIFT_OPTIMIZATION_LEVEL=-Onone build
       - name: Verify and package
         run: |
           codesign --verify --deep --strict build/Build/Products/Release/Maccy.app
