@@ -177,19 +177,13 @@ class Popup {
   }
 
   private func handleFlagsChanged(_ event: NSEvent) -> NSEvent? {
-    // If we are in cycle mode, releasing modifiers triggers a selection
-    if state == .cycle && allModifiersReleased(event) {
+    // Accept the first item on release too; extra hotkey presses advance the selection.
+    if (state == .opening || state == .cycle) && allModifiersReleased(event) {
       let modifierFlags = NSEvent.ModifierFlags.currentModifierFlags
       DispatchQueue.main.async {
         AppState.shared.select(flags: modifierFlags)
       }
       return nil
-    }
-
-    // Otherwise if in opening mode, enter toggle mode
-    if state == .opening && allModifiersReleased(event) {
-      state = .toggle
-      return event
     }
 
     return event
